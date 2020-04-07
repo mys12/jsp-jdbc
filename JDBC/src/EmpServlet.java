@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -46,13 +47,22 @@ public class EmpServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		String action = request.getParameter("action");
+		String url = "";
 		if("search".equals(action)) {
 			int empId = Integer.parseInt(request.getParameter("empId"));
 			EmpVO emp = dao.selectEmployee(empId);
 			request.setAttribute("emp", emp);
-			request.getRequestDispatcher("/EmpView.jsp").forward(request, response);
-			
+			url = "/EmpView.jsp";
+		}else if("list".equals(action)) {
+			request.setAttribute("list", dao.selectEmployeeList());
+			url = "/EmpList.jsp";
+		}else if("insert".equals(action)) {
+			request.setAttribute("jobList", dao.selectJobList());
+			request.setAttribute("deptList", dao.selectDeptList());
+			request.setAttribute("manList", dao.selectManagerList());
+			url ="/EmpInsert.jsp";
 		}
+		request.getRequestDispatcher(url).forward(request, response);
 	}
 
 	/**
