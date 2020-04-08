@@ -23,7 +23,7 @@ public class EmpDAO {
 			System.out.println("드라이버 로드 실패");
 		}
 	}
-	
+
 	private Connection getConnection() {
 		Connection con = null;
 		DataSource ds = null;
@@ -36,11 +36,11 @@ public class EmpDAO {
 		}
 		return con;
 	}
-	
+
 	private void closeConnection(Connection con) {
 		if(con!=null) try {con.close();} catch(SQLException e) {}
 	}
-	
+
 	public EmpVO selectEmployee(int empId) {
 		Connection con = null;
 		EmpVO emp = new EmpVO();
@@ -71,7 +71,7 @@ public class EmpDAO {
 		}
 		return emp;
 	}
-	
+
 	public ArrayList<EmpVO> selectEmployeeList(){
 		Connection con = null;
 		ArrayList<EmpVO> list = new ArrayList<>();
@@ -103,7 +103,7 @@ public class EmpDAO {
 		}
 		return list;
 	}
-	
+
 	public ArrayList<JobVO> selectJobList() {
 		Connection con = null;
 		ArrayList<JobVO> jobList = new ArrayList<>();
@@ -126,7 +126,7 @@ public class EmpDAO {
 		}
 		return jobList;
 	}
-	
+
 	public ArrayList<DeptVO> selectDeptList() {
 		Connection con = null;
 		ArrayList<DeptVO> deptList = new ArrayList<>();
@@ -140,7 +140,7 @@ public class EmpDAO {
 				dept.setDepartmentId(rs.getInt("department_id"));
 				dept.setDepartmentName(rs.getString("department_name"));
 				deptList.add(dept);
-				
+
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -150,7 +150,7 @@ public class EmpDAO {
 		}
 		return deptList;
 	}
-	
+
 	public ArrayList<EmpVO> selectManagerList() {
 		Connection con = null;
 		ArrayList<EmpVO> manList = new ArrayList<>();
@@ -172,5 +172,69 @@ public class EmpDAO {
 			closeConnection(con);
 		}
 		return manList;
+	}
+	public ArrayList<EmpVO> selectEmployeeByDepartment(int depId) {
+		Connection con = null;
+		ArrayList<EmpVO> list = new ArrayList<EmpVO>();
+		try {
+			con = getConnection();
+			String sql = "select * from employees where department_id=?";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setInt(1, depId);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				EmpVO emp = new EmpVO();
+				emp.setEmployeeId(rs.getInt(1));
+				emp.setFirstName(rs.getString("first_name"));
+				emp.setLastName(rs.getString("last_name"));
+				emp.setEmail(rs.getString("email"));
+				emp.setPhoneNumber(rs.getString("phone_number"));
+				emp.setHireDate(rs.getDate("hire_date"));
+				emp.setJobId(rs.getString("job_id"));
+				emp.setSalary(rs.getDouble("salary"));
+				emp.setCommissionPct(rs.getDouble(9));
+				emp.setManagerId(rs.getInt("manager_id"));
+				emp.setDepartmentId(rs.getInt(11));
+				list.add(emp);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("selectEmployeeByDepartment() 에러 발생 - 콘솔 확인");
+		} finally {
+			closeConnection(con);
+		}
+		return list;
+	}
+
+	public void insertEmployee(EmpVO emp) {
+		Connection con = null;
+		try {
+			con = getConnection();
+			String sql = "insert into employees values(?,?,?,?,?,?,?,?,?,?,?)";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setInt(1, emp.getEmployeeId());
+			stmt.setString(2, emp.getFirstName());
+			stmt.setString(3, emp.getLastName());
+			stmt.setString(4, emp.getEmail());
+			stmt.setString(5, emp.getPhoneNumber());
+			stmt.setDate(6, emp.getHireDate());
+			stmt.setString(7, emp.getJobId());
+			stmt.setDouble(8, emp.getSalary());
+			stmt.setDouble(9, emp.getCommissionPct());
+			stmt.setInt(10, emp.getManagerId());
+			stmt.setInt(11, emp.getDepartmentId());
+			if(stmt.executeUpdate() == 0 ) {
+				throw new RuntimeException("입력되지 않았습니다.");
+			}
+		}catch(SQLException e) {
+			if(e.getMessage().contains("unique")) {
+				throw new RuntimeException("사원번호 또는 이메일 중복");
+			}else {
+				e.printStackTrace();
+				throw new RuntimeException("insertEmployee() 에러 발생 ");
+			}
+		} finally {
+			closeConnection(con);
+		}
 	}
 }

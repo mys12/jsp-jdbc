@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletConfig;
@@ -61,6 +63,10 @@ public class EmpServlet extends HttpServlet {
 			request.setAttribute("deptList", dao.selectDeptList());
 			request.setAttribute("manList", dao.selectManagerList());
 			url ="/EmpInsert.jsp";
+		} else if("depSearch".equals(action)) {
+			int depId = Integer.parseInt(request.getParameter("depId"));
+			request.setAttribute("list", dao.selectEmployeeByDepartment(depId));
+			url = "/EmpList.jsp";
 		}
 		request.getRequestDispatcher(url).forward(request, response);
 	}
@@ -69,7 +75,40 @@ public class EmpServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		int empId = Integer.parseInt(request.getParameter("empId"));
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+		String phoneNumber = request.getParameter("phoneNumber");
+		String sDate = request.getParameter("hireDate");
+		SimpleDateFormat tool = new SimpleDateFormat("yyyy-MM-dd");
+		java.sql.Date hireDate = null;
+		try {
+			hireDate = new java.sql.Date(tool.parse(sDate).getTime());
+		} catch(ParseException e) {
+			e.printStackTrace();
+		}
+		String jobId = request.getParameter("jobId");
+		Double salary = Double.parseDouble(request.getParameter("salary"));
+		Double commissionPct = Double.parseDouble(request.getParameter("commissionPct"));
+		int managerId = Integer.parseInt(request.getParameter("managerId"));
+		int departmentId = Integer.parseInt(request.getParameter("departmentId"));
 		
+		EmpVO emp = new EmpVO();
+		emp.setEmployeeId(empId);
+		emp.setFirstName(firstName);
+		emp.setLastName(lastName);
+		emp.setEmail(email);
+		emp.setPhoneNumber(phoneNumber);
+		emp.setHireDate(hireDate);
+		emp.setJobId(jobId);
+		emp.setSalary(salary);
+		emp.setCommissionPct(commissionPct);
+		emp.setManagerId(managerId);
+		emp.setDepartmentId(departmentId);
+		dao.insertEmployee(emp);
+		response.sendRedirect("/JDBC/Emp.do?action=list");
 	}
 
 }

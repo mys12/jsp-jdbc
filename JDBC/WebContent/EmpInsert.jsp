@@ -10,7 +10,7 @@
 </head>
 <body>
 <h2>정보 입력</h2>
-<form action="/Emp.do" method=post>
+<form action="/JDBC/Emp.do" method=post>
 <table>
 <tr>
 <td> 사원 아이디 : </td> <td><input type=text name=empId></td>
