@@ -29,7 +29,7 @@
 <%for(EmpVO emp : list) { %>
 <td><%=emp.getEmployeeId() %></td>
 <td><%=emp.getFirstName() %></td>
-<td><%=emp.getLastName() %></td>
+<td><a href="/JDBC/Emp.do?action=search&empId=<%=emp.getEmployeeId()%>"><%=emp.getLastName() %></td>
 <td><%=emp.getEmail() %></td>
 <td><%=emp.getPhoneNumber() %></td>
 <td><%=emp.getHireDate() %></td>

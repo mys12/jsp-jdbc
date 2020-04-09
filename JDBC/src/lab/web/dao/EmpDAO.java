@@ -43,10 +43,18 @@ public class EmpDAO {
 
 	public EmpVO selectEmployee(int empId) {
 		Connection con = null;
-		EmpVO emp = new EmpVO();
+		EmpDetailVO emp = new EmpDetailVO();
 		try {
 			con = getConnection();
-			String sql = "select * from employees where employee_id = ?";
+			String sql = "select * from employees emp "
+					+ "join jobs j "
+					+ "on emp.job_id=j.job_id "
+					+ "join departments dep "
+					+ "on emp.department_id=dep.department_id "
+					+ "left join (select employee_id as manager_id, first_name||' '||last_name as manager_name "
+					+ "from employees where employee_id in (select distinct manager_id from employees)) man "
+					+ "on emp.manager_id=man.manager_id "
+					+ "where employee_id = ?";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			stmt.setInt(1, empId);
 			ResultSet rs = stmt.executeQuery();
@@ -62,6 +70,9 @@ public class EmpDAO {
 				emp.setCommissionPct(rs.getDouble(9));
 				emp.setManagerId(rs.getInt("manager_id"));
 				emp.setDepartmentId(rs.getInt(11));
+				emp.setJobTitle(rs.getString("job_title"));
+				emp.setDepartmentName(rs.getString("department_name"));
+				emp.setManagerName(rs.getString("manager_name"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -132,13 +143,15 @@ public class EmpDAO {
 		ArrayList<DeptVO> deptList = new ArrayList<>();
 		try {
 			con = getConnection();
-			String sql = "select department_id, department_name from departments";
+			String sql = "select * from departments";
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				DeptVO dept = new DeptVO();
 				dept.setDepartmentId(rs.getInt("department_id"));
 				dept.setDepartmentName(rs.getString("department_name"));
+				dept.setManagerId(rs.getInt("manager_id"));
+				dept.setLocationId(rs.getInt("location_id"));
 				deptList.add(dept);
 
 			}
@@ -232,6 +245,54 @@ public class EmpDAO {
 			}else {
 				e.printStackTrace();
 				throw new RuntimeException("insertEmployee() 에러 발생 ");
+			}
+		} finally {
+			closeConnection(con);
+		}
+	}
+	
+	public ArrayList<LocationsVO> selectLocationList(){
+		Connection con = null;
+		ArrayList<LocationsVO> cityList = new ArrayList<>();
+		try {
+			con = getConnection();
+			String sql = "select location_id, city from locations";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				LocationsVO city = new LocationsVO();
+				city.setLocationId(rs.getInt("location_id"));
+				city.setCity(rs.getString("city"));
+				cityList.add(city);
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("selectLocationList() 에러 발생 - 콘솔 확인");
+		} finally {
+			closeConnection(con);
+		}
+		return cityList;
+	}
+	
+	public void insertDepartment(DeptVO dep) {
+		Connection con = null;
+		try {
+			con = getConnection();
+			String sql = "insert into departments values(?,?,?,?)";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setInt(1, dep.getDepartmentId());
+			stmt.setString(2, dep.getDepartmentName());
+			stmt.setInt(3, dep.getManagerId());
+			stmt.setInt(4, dep.getLocationId());
+			if(stmt.executeUpdate()==0) {
+				throw new RuntimeException("입력되지 않았습니다.");
+			}
+		}catch(SQLException e) {
+			if(e.getMessage().contains("UK")) {
+				throw new RuntimeException("부서번호가 중복되었습니다.");
+			}else {
+				e.printStackTrace();
+				throw new RuntimeException("insertDepartment() 에러 발생 ");
 			}
 		} finally {
 			closeConnection(con);

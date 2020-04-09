@@ -4,7 +4,21 @@ public class DeptVO {
 
 	private int departmentId;
 	private String departmentName;
+	private int managerId;
+	private int locationId;
 	
+	public int getManagerId() {
+		return managerId;
+	}
+	public void setManagerId(int managerId) {
+		this.managerId = managerId;
+	}
+	public int getLocationId() {
+		return locationId;
+	}
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
 	public int getDepartmentId() {
 		return departmentId;
 	}
