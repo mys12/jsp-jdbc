@@ -20,5 +20,8 @@
 보너스율 : <%=emp.getCommissionPct() %><br>
 매니저 : <%=emp.getManagerName() %>(<%=emp.getManagerId() %>)<br>
 부서 : <%=emp.getDepartmentName() %>(<%=emp.getDepartmentId() %>)<br>
+
+<a href="/JDBC/Emp.do?action=update&empId=<%=emp.getEmployeeId()%>">정보 수정</a>
+&nbsp; <a href="/JDBC/Emp.do?action=delete&empId=<%=emp.getEmployeeId()%>">정보 삭제</a>
 </body>
 </html>

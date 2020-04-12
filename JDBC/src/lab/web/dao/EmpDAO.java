@@ -298,4 +298,66 @@ public class EmpDAO {
 			closeConnection(con);
 		}
 	}
+	public void updateEmployee(EmpVO emp) {
+		Connection con = null;
+		try {
+			con = getConnection();
+			String sql = "update employees set first_name=?, last_name=?,"
+					+ "email=?, phone_number=?, hire_date=?, job_id=?,"
+					+ "salary=?, commission_pct=?, manager_id=?, department_id=? "
+					+ "where employee_id=?";
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.setString(1, emp.getFirstName());
+			stmt.setString(2, emp.getLastName());
+			stmt.setString(3, emp.getEmail());
+			stmt.setString(4, emp.getPhoneNumber());
+			stmt.setDate(5, emp.getHireDate());
+			stmt.setString(6, emp.getJobId());
+			stmt.setDouble(7, emp.getSalary());
+			stmt.setDouble(8, emp.getCommissionPct());
+			stmt.setInt(9, emp.getManagerId());
+			stmt.setInt(10, emp.getDepartmentId());
+			stmt.setInt(11, emp.getEmployeeId());
+			if(stmt.executeUpdate()==0) {
+				throw new RuntimeException("수정되지 않았습니다.");
+			}
+		}catch(SQLException e) {
+			if(e.getMessage().contains("job_history")) {
+				throw new RuntimeException("제약조건에 위배됩니다.");
+			}else {
+				e.printStackTrace();
+				throw new RuntimeException("updateEmployee() 에러 발생 ");
+			}
+		} finally {
+			closeConnection(con);
+		}
+	}
+	public void deleteEmployee(int empId) {
+		Connection con = null;
+		try {
+			con = getConnection();
+			con.setAutoCommit(false);
+			String sql1= "UPDATE departments SET manager_id=null where manager_id=?";
+			PreparedStatement stmt = con.prepareStatement(sql1);
+			stmt.setInt(1,empId);
+			String sql2="UPDATE employees SET manager_id=null where manager_id=?";
+			stmt=con.prepareStatement(sql2);
+			stmt.setInt(1, empId);
+			String sql3 = "delete from employees where employee_id=?";
+			stmt=con.prepareStatement(sql3);
+			stmt.setInt(1,empId);
+			if(stmt.executeUpdate()==0) {
+				con.rollback();
+				throw new RuntimeException("삭제되지 않았습니다.");
+			}else {
+				con.commit();
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("deleteEmployee() 에러 발생 - 콘솔 확인");
+		} finally {
+			closeConnection(con);
+		}
+	}
 }
