@@ -55,28 +55,28 @@ public class EmpServlet extends HttpServlet {
 			int empId = Integer.parseInt(request.getParameter("empId"));
 			EmpVO emp = dao.selectEmployee(empId);
 			request.setAttribute("emp", emp);
-			url = "/EmpView.jsp";
+			url = "/hr/EmpView.jsp";
 		}else if("list".equals(action)) {
 			request.setAttribute("list", dao.selectEmployeeList());
-			url = "/EmpList.jsp";
+			url = "/hr/EmpList.jsp";
 		}else if("insert".equals(action)) {
 			request.setAttribute("jobList", dao.selectJobList());
 			request.setAttribute("deptList", dao.selectDeptList());
 			request.setAttribute("manList", dao.selectManagerList());
 			request.setAttribute("message", "입력");
 			request.setAttribute("action", action);
-			url ="/EmpInsert.jsp";
+			url ="/hr/EmpInsert.jsp";
 		} else if("depSearch".equals(action)) {
 			int depId = Integer.parseInt(request.getParameter("depId"));
 			request.setAttribute("list", dao.selectEmployeeByDepartment(depId));
-			url = "/EmpList.jsp";
+			url = "/hr/EmpList.jsp";
 		} else if("insertDep".equals(action)) {
 			request.setAttribute("manList", dao.selectManagerList());
 			request.setAttribute("cityList", dao.selectLocationList());
-			url = "/DepInsert.jsp";
+			url = "/hr/DepInsert.jsp";
 		} else if("depList".equals(action)) {
 			request.setAttribute("deptList", dao.selectDeptList());
-			url = "/DepList.jsp";
+			url = "/hr/DepList.jsp";
 		} else if("update".equals(action)) {
 			int empId = Integer.parseInt(request.getParameter("empId"));
 			EmpVO emp = dao.selectEmployee(empId);
@@ -86,13 +86,13 @@ public class EmpServlet extends HttpServlet {
 			request.setAttribute("manList", dao.selectManagerList());
 			request.setAttribute("message", "수정");
 			request.setAttribute("action", action);
-			url ="/EmpInsert.jsp";
+			url ="/hr/EmpInsert.jsp";
 		} else if("delete".equals(action)) {
 			int empId = Integer.parseInt(request.getParameter("empId"));
 			EmpVO emp = dao.selectEmployee(empId);
 			request.setAttribute("emp", emp);
 			request.setAttribute("action", action);
-			url = "/Delete.jsp";
+			url = "/hr/Delete.jsp";
 		}
 		request.getRequestDispatcher(url).forward(request, response);
 	}
