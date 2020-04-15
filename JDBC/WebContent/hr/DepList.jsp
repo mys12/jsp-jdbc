@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import = "java.util.*" %>
 <%@ page import = "lab.web.vo.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,15 +18,14 @@
 <td>매니저</td>
 <td>지역</td>
 </tr>
-<%ArrayList<DeptVO> depList = (ArrayList<DeptVO>)request.getAttribute("deptList"); %>
 <tr>
-<%for(DeptVO dep : depList) {%>
-<td><%=dep.getDepartmentId() %></td>
-<td><%=dep.getDepartmentName() %></td>
-<td><%=dep.getManagerId() %></td>
-<td><%=dep.getLocationId() %></td>
+<c:forEach var="dep" items="depList">
+<td>${dep.departmentId}</td>
+<td>${dep.departmentName}</td>
+<td>${dep.managerId}</td>
+<td>${dep.locationId}</td>
 </tr>
-<%} %>
+</c:forEach>
 </table>
 </body>
 </html>

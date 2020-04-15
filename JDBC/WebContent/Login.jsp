@@ -8,7 +8,14 @@
 </head>
 <body>
 <h2>로그인</h2>
-<%=request.getAttribute("message")==null ? "" : request.getAttribute("message")%>
+<%--${pageScope.message} --%>
+<%--${requestScope.message} --%>
+<%--${sessionScope.message} --%>
+<%--${applicationScope.message} --%>
+<%--${param.message} --%>
+<%--c:redirect url="" --%>
+<%--c:url value="" --%>
+${message}
 <form action="/JDBC/Login.do" method="post">
 <br>
 아이디 : <input type=text name=userId><br>

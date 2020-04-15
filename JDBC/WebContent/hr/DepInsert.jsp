@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="java.util.*" %>
-<%@ page import="lab.web.vo.*" %>
+<%@ page import = "lab.web.vo.*" %>
+<%@ page import = "java.util.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,25 +15,25 @@
 <input type=hidden name=action value=insertDep>
 <table>
 <tr>
-<td> 부서 번호 : </td> <td><input type=text name=depId></td>
+<td>부서 번호</td><td><input type=text name=depId></td>
 </tr>
 <tr>
-<td> 부서 이름 : </td> <td><input type=text name=departmentName></td>
+<td>부서 이름</td><td><input type=text name=depName></td>
 </tr>
-<%ArrayList<EmpVO> manList = (ArrayList<EmpVO>)request.getAttribute("manList"); %>
 <tr>
-<td> 매니저 : </td> <td><select name=managerId>
-<%for(EmpVO man : manList) { %>
-<option value=<%=man.getEmployeeId()%>><%=man.getFirstName()%></option>
-<% } %>
-</select></td></tr>
-<%ArrayList<LocationsVO> cityList = (ArrayList<LocationsVO>)request.getAttribute("cityList");%>
+<td>매니저 </td><td><select name=managerId>
+<c:forEach var="man" items="${manList}">
+<option value="${man.employeeId}">${man.firstName}</option>
+</c:forEach>
+</select></td>
+</tr>
 <tr>
-<td> 지역 : </td> <td><select name =locationId>
-<%for(LocationsVO city : cityList) { %>
-<option value=<%=city.getLocationId()%>><%=city.getCity()%></option>
-<% } %>
-</select> </td></tr>
+<td>도시 이름</td><td><select name=locId>
+<c:forEach var="city" items="${cityList}">
+<option value="${city.locationId}">${city.city}</option>
+</c:forEach>
+</select></td>
+</tr>
 <tr>
 <td><input type=submit value=저장> 
 <input type=reset value=취소>

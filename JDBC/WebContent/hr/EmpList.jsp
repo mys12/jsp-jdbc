@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import = "java.util.*" %>
 <%@ page import = "lab.web.vo.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,22 +25,21 @@
 <td>매니저</td>
 <td>부서</td>
 </tr>
-<% ArrayList<EmpVO> list = (ArrayList<EmpVO>)request.getAttribute("list");%>
+<c:forEach var="emp" items="${list}">
 <tr>
-<%for(EmpVO emp : list) { %>
-<td><%=emp.getEmployeeId() %></td>
-<td><%=emp.getFirstName() %></td>
-<td><a href="/JDBC/Emp.do?action=search&empId=<%=emp.getEmployeeId()%>"><%=emp.getLastName() %></td>
-<td><%=emp.getEmail() %></td>
-<td><%=emp.getPhoneNumber() %></td>
-<td><%=emp.getHireDate() %></td>
-<td><%=emp.getJobId() %></td>
-<td><%=emp.getSalary() %></td>
-<td><%=emp.getCommissionPct() %></td>
-<td><%=emp.getManagerId() %></td>
-<td><%=emp.getDepartmentId() %></td>
-<tr>
-<% } %> 
+<td>${emp.employeeId}</td>
+<td>${emp.firstName}</td>
+<td><a href="/JDBC/Emp.do?action=search&empId=${emp.employeeId}">${emp.lastName}</td>
+<td>${emp.email}</td>
+<td>${emp.phoneNumber}</td>
+<td>${emp.hireDate}</td>
+<td>${emp.jobId}</td>
+<td>${emp.salary}</td>
+<td>${emp.commissionPct}</td>
+<td>${emp.managerId}</td>
+<td>${emp.departmentId}</td>
+</tr> 
+</c:forEach>
 </table>
 </body>
 </html>
